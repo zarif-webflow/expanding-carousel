@@ -4,8 +4,9 @@
     "rootDir": ".",
     "baseUrl": "./",
     "paths": {
-      "$utils/*": ["src/utils/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["@finsweet/ts-utils"]
-  }
+  },
+  "exclude": ["node_modules"]
 }

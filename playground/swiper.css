@@ -1,0 +1,15 @@
+.swiper {
+  height: 704px;
+}
+
+.swiper-slide {
+  background-color: blueviolet;
+  width: 300px;
+  transition: width 300ms ease !important;
+  overflow: hidden;
+}
+
+.swiper-slide.active {
+  background-color: cadetblue;
+  width: 50% !important;
+}
