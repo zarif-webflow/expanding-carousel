@@ -54,8 +54,7 @@
   "dependencies": {
     "@finsweet/ts-utils": "^0.40.0",
     "embla-carousel": "^8.5.1",
-    "embla-carousel-autoplay": "^8.5.1",
-    "swiper": "^11.1.15"
+    "embla-carousel-autoplay": "^8.5.1"
   },
   "engines": {
     "pnpm": ">=9"

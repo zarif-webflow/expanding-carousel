@@ -1,14 +1,39 @@
 .embla {
   overflow: hidden;
-  max-width: 48rem;
+  max-width: 1088px;
+  margin-inline: auto;
 }
 .embla__container {
   display: flex;
 }
 .embla__slide {
-  flex: 0 0 30%;
+  flex: 0 0 80px;
   min-width: 0;
-  height: 200px;
+  height: 600px;
   background-color: aquamarine;
-  margin-right: 20px;
+  margin-right: 8px;
+  transition: flex 0.3s ease;
+  position: relative;
+}
+
+.embla__slide:last-of-type {
+  margin-right: 0px;
+}
+
+.embla__slide.is-active {
+  flex: 1 0 500px;
+}
+
+.slide__background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slide__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* object-position: center top; */
 }
