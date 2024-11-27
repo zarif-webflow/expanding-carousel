@@ -94,3 +94,22 @@
 /* .embla__slide:not(.is-active) .slide__content-wrapper:not([data-slide]) {
   visibility: hidden;
 } */
+
+.embla__slide:first-of-type .slide__button.is-prev {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.embla__slide:last-of-type .slide__button.is-next {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.slide__button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+}
