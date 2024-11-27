@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="embla.css" />
     <link rel="stylesheet" href="swiper.css" />
@@ -17,23 +23,62 @@
         <div class="embla">
           <div class="embla__container">
             <div class="embla__slide">
+              <div class="slide__content-wrapper">
+                <div class="slide__content-upper">
+                  <p class="slide__heading">Quick Setup</p>
+                  <p class="slide__desc">
+                    The robot navigates by a laser scanner and does not need any additional
+                    installations in the hall. The stand identification text, corner markings and
+                    other desired markings are printed directly on the floor with washable ink. A
+                    large selection of colours is available to suit different types of floors.
+                  </p>
+                </div>
+                <div class="slide__pagination">
+                  <button class="slide__button is-prev">Previous</button>
+                  <button class="slide__button is-next">Next</button>
+                </div>
+              </div>
               <div class="slide__background">
                 <video src="./video1.mp4" class="slide__video" loop muted></video>
               </div>
             </div>
             <div class="embla__slide is-active">
-              <div class="slide__background">
-                <video src="./video2.mp4" class="slide__video" loop muted></video>
+              <div class="slide__content-wrapper">
+                <div class="slide__content-upper">
+                  <p class="slide__heading">Customizable to Your layout</p>
+                  <p class="slide__desc">
+                    The printed layout is generated from your exhibition CAD-drawing and easily
+                    loaded into the robot. The system can handle common CAD-file formats.
+                  </p>
+                </div>
+                <div class="slide__pagination">
+                  <button class="slide__button is-prev">Previous</button>
+                  <button class="slide__button is-next">Next</button>
+                </div>
               </div>
-            </div>
-            <div class="embla__slide">
               <div class="slide__background">
                 <video src="./video3.mp4" class="slide__video" loop muted></video>
               </div>
             </div>
-            <!-- <div class="embla__slide">Slide 4</div>
-            <div class="embla__slide">Slide 5</div>
-            <div class="embla__slide">Slide 6</div> -->
+            <div class="embla__slide">
+              <div class="slide__content-wrapper">
+                <div class="slide__content-upper">
+                  <p class="slide__heading">High Productivity</p>
+                  <p class="slide__desc">
+                    Typically, one robot marks 80 stands per hour. Several robots can be used
+                    together to further increase speed. Fast startup and shutdown time.  Running
+                    time is more than 12 hours per charge.
+                  </p>
+                </div>
+                <div class="slide__pagination">
+                  <button class="slide__button is-prev">Previous</button>
+                  <button class="slide__button is-next">Next</button>
+                </div>
+              </div>
+              <div class="slide__background">
+                <video src="./video2.mp4" class="slide__video" loop muted></video>
+              </div>
+            </div>
           </div>
         </div>
       </div>
