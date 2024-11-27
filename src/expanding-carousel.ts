@@ -28,6 +28,7 @@ for (let i = 0; i < slideNodes.length; i++) {
   // Play the video at first page load, if it exists on active slide
   if (slideEl.classList.contains('is-active')) {
     slideElVideo?.play();
+    activeSlideElement = slideEl;
   }
 
   slideEl.addEventListener('click', () => {
