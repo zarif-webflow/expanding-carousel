@@ -1,12 +1,12 @@
-.embla {
+.exp-carousel-wrapper {
   overflow: hidden;
   max-width: 1088px;
   margin-inline: auto;
 }
-.embla__container {
+.exp-carousel-cont {
   display: flex;
 }
-.embla__slide {
+.exp-slide {
   flex: 0 0 80px;
   min-width: 0;
   height: 600px;
@@ -16,15 +16,15 @@
   overflow: hidden;
 }
 
-.embla__slide:last-of-type {
+.exp-slide:last-of-type {
   margin-right: 0px;
 }
 
-.embla__slide.is-active {
+.exp-slide.is-active {
   flex: 1 0 500px;
 }
 
-.slide__overlay {
+.exp-slide-overlay {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -36,7 +36,7 @@
     background-color 0.4s ease;
 }
 
-.slide__background {
+.exp-bg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -44,13 +44,13 @@
   z-index: 50;
 }
 
-.slide__video {
+.exp-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.slide__content-wrapper {
+.exp-slide-content {
   padding: 56px;
   display: flex;
   flex-direction: column;
@@ -61,51 +61,52 @@
   color: white;
 }
 
-.embla__slide.is-active .slide__overlay {
+.exp-slide.is-active .exp-slide-overlay {
   backdrop-filter: grayscale(0%);
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgb(0, 0, 0);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
 }
 
-.slide__heading {
+.exp-heading {
   font-size: 2rem;
   font-weight: 800;
   text-wrap: pretty;
 }
 
-.slide__desc {
+.exp-desc {
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.5;
   max-width: 372px;
 }
 
-.slide__content-upper {
+.exp-slide-content-up {
   display: flex;
   gap: 56px;
   justify-content: space-between;
 }
 
-.slide__pagination {
+.exp-buttons {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* .embla__slide:not(.is-active) .slide__content-wrapper:not([data-slide]) {
+/* .exp-slide:not(.is-active) .exp-slide-content:not([data-slide]) {
   visibility: hidden;
 } */
 
-.embla__slide:first-of-type .slide__button.is-prev {
+.exp-slide:first-of-type .exp-button.is-prev {
   opacity: 0.5;
   pointer-events: none;
 }
 
-.embla__slide:last-of-type .slide__button.is-next {
+.exp-slide:last-of-type .exp-button.is-next {
   opacity: 0.5;
   pointer-events: none;
 }
 
-.slide__button {
+.exp-button {
   outline: none;
   border: none;
   background-color: transparent;
@@ -115,10 +116,10 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .embla__slide {
+  .exp-slide {
     flex: 1 0 100% !important;
   }
-  .embla__slide.is-active {
+  .exp-slide.is-active {
     flex: 1 0 100% !important;
   }
 }

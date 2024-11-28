@@ -2,7 +2,7 @@ import EmblaCarousel, { type EmblaOptionsType } from 'embla-carousel';
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
 
-import { getAssertedHtmlElement } from './utils/util';
+import { getAssertedHtmlElement, getAssertedHtmlElements } from './utils/util';
 
 const mm = gsap.matchMedia();
 
@@ -11,172 +11,178 @@ gsap.registerPlugin(Flip);
 /**
  * Register Embla Carousel Plugins
  */
-const emblaNode = getAssertedHtmlElement('.embla');
-const options: EmblaOptionsType = {
-  loop: false,
-  align: 'center',
-  skipSnaps: true,
-  breakpoints: {
-    '(min-width: 768px)': { watchDrag: false },
-  },
-  startIndex: 1,
-};
-const emblaApi = EmblaCarousel(emblaNode, options);
+const allCarouselWrappers = getAssertedHtmlElements('.exp-carousel-wrapper');
 
-/**
- * Elements
- */
-const slideNodes = emblaApi.slideNodes();
-const nextButtons = Array.from(document.querySelectorAll<HTMLElement>('.slide__button.is-next'));
-const prevButtons = Array.from(document.querySelectorAll<HTMLElement>('.slide__button.is-prev'));
+for (const emblaNode of allCarouselWrappers) {
+  const startIndexParsed = Number.parseInt(emblaNode.dataset.startIndex || '');
+  const startIndex = Number.isNaN(startIndexParsed) ? 0 : startIndexParsed;
 
-/**
- * States
- */
-let activeSlideIndex = 1;
-let activeSlideElement: HTMLElement | undefined = undefined;
+  const options: EmblaOptionsType = {
+    loop: false,
+    align: 'center',
+    breakpoints: {
+      '(min-width: 992px)': { watchDrag: false },
+    },
+    startIndex,
+    slides: getAssertedHtmlElements('.exp-slide', emblaNode),
+  };
+  const emblaApi = EmblaCarousel(emblaNode, options);
 
-/**
- * Functions
- */
+  /**
+   * Elements
+   */
+  const slideNodes = emblaApi.slideNodes();
+  const nextButtons = Array.from(document.querySelectorAll<HTMLElement>('.exp-button.is-next'));
+  const prevButtons = Array.from(document.querySelectorAll<HTMLElement>('.exp-button.is-prev'));
 
-const setActiveSlide = (slideElIndex: number) => {
-  if (slideElIndex === activeSlideIndex) return;
+  /**
+   * States
+   */
+  let activeSlideIndex = 1;
+  let activeSlideElement: HTMLElement | undefined = undefined;
 
-  // Elements
-  const slideEl = slideNodes.at(slideElIndex)!;
+  /**
+   * Functions
+   */
 
-  const slideContentEl = getAssertedHtmlElement('.slide__content-wrapper', slideEl);
-  const slideElVideo = slideEl.querySelector<HTMLVideoElement>('video');
-  const prevActiveSlideVideo = activeSlideElement?.querySelector<HTMLVideoElement>('video');
-  const prevActiveSlideContent = activeSlideElement
-    ? getAssertedHtmlElement('.slide__content-wrapper', activeSlideElement)
-    : undefined;
+  const setActiveSlide = (slideElIndex: number) => {
+    if (slideElIndex === activeSlideIndex) return;
 
-  // Scroll to the current active slide
-  emblaApi.scrollTo(slideElIndex);
+    // Elements
+    const slideEl = slideNodes.at(slideElIndex)!;
 
-  let flipState: Flip.FlipState | undefined = undefined;
+    const slideContentEl = getAssertedHtmlElement('.exp-slide-content', slideEl);
+    const slideElVideo = slideEl.querySelector<HTMLVideoElement>('video');
+    const prevActiveSlideVideo = activeSlideElement?.querySelector<HTMLVideoElement>('video');
+    const prevActiveSlideContent = activeSlideElement
+      ? getAssertedHtmlElement('.exp-slide-content', activeSlideElement)
+      : undefined;
 
-  mm.add('(min-width: 768px)', () => {
-    // Gsap Flip State
-    flipState = Flip.getState(slideNodes, { props: 'flex' });
-  });
+    // Scroll to the current active slide
+    emblaApi.scrollTo(slideElIndex);
 
-  // Remove the previous active slide and pause it's video
-  activeSlideElement?.classList.remove('is-active');
-  prevActiveSlideVideo?.pause();
+    let flipState: Flip.FlipState | undefined = undefined;
 
-  if (prevActiveSlideContent)
-    gsap.to(prevActiveSlideContent, {
-      x: '100%',
-      opacity: 0,
+    mm.add('(min-width: 992px)', () => {
+      // Gsap Flip State
+      flipState = Flip.getState(slideNodes, { props: 'flex' });
     });
 
-  // Add the active class and play the video
-  slideEl.classList.add('is-active');
+    // Remove the previous active slide and pause it's video
+    activeSlideElement?.classList.remove('is-active');
+    prevActiveSlideVideo?.pause();
 
-  let matchedMedia: boolean = false;
-
-  mm.add('(min-width: 768px)', () => {
-    matchedMedia = true;
-    if (flipState)
-      Flip.from(flipState, {
-        duration: 0.4,
-        ease: 'power1.inOut',
-        onComplete: () => {
-          gsap.fromTo(
-            slideContentEl,
-            {
-              x: '100%',
-              opacity: 0,
-              visibility: 'hidden',
-            },
-            {
-              x: '0%',
-              opacity: 1,
-              visibility: 'visible',
-            }
-          );
-        },
-      });
-  });
-
-  if (!matchedMedia) {
-    gsap.fromTo(
-      slideContentEl,
-      {
+    if (prevActiveSlideContent)
+      gsap.to(prevActiveSlideContent, {
         x: '100%',
         opacity: 0,
-        visibility: 'hidden',
-      },
-      {
-        x: '0%',
-        opacity: 1,
-        visibility: 'visible',
-      }
-    );
+      });
 
-    // if (prevActiveSlideContent)
-    //   gsap.to(prevActiveSlideContent, {
-    //     visibility: 'hidden',
-    //   });
-  }
-  // Reassign the active slide
-  activeSlideElement = slideEl;
-  activeSlideIndex = slideElIndex;
+    // Add the active class and play the video
+    slideEl.classList.add('is-active');
 
-  if (!slideElVideo) return;
+    let matchedMedia: boolean = false;
 
-  slideElVideo.play();
-};
-
-/**
- * Register event listeners in a loop
- */
-for (let i = 0; i < slideNodes.length; i++) {
-  const slideEl = slideNodes.at(i)!;
-
-  const slideContentEl = getAssertedHtmlElement('.slide__content-wrapper', slideEl);
-
-  const slideElVideo = slideEl.querySelector<HTMLVideoElement>('video');
-
-  // Play the video at first page load, if it exists on active slide
-  if (slideEl.classList.contains('is-active')) {
-    slideElVideo?.play();
-    activeSlideElement = slideEl;
-    activeSlideIndex = i;
-    slideContentEl.style.visibility = 'visible';
-  } else {
-    slideContentEl.style.visibility = 'hidden';
-  }
-
-  slideEl.addEventListener('click', () => {
-    mm.add('(min-width: 768px)', () => {
-      setActiveSlide(i);
+    mm.add('(min-width: 992px)', () => {
+      matchedMedia = true;
+      if (flipState)
+        Flip.from(flipState, {
+          duration: 0.4,
+          ease: 'power1.inOut',
+          onComplete: () => {
+            gsap.fromTo(
+              slideContentEl,
+              {
+                x: '100%',
+                opacity: 0,
+                visibility: 'hidden',
+              },
+              {
+                x: '0%',
+                opacity: 1,
+                visibility: 'visible',
+              }
+            );
+          },
+        });
     });
+
+    if (!matchedMedia) {
+      gsap.fromTo(
+        slideContentEl,
+        {
+          x: '100%',
+          opacity: 0,
+          visibility: 'hidden',
+        },
+        {
+          x: '0%',
+          opacity: 1,
+          visibility: 'visible',
+        }
+      );
+
+      // if (prevActiveSlideContent)
+      //   gsap.to(prevActiveSlideContent, {
+      //     visibility: 'hidden',
+      //   });
+    }
+    // Reassign the active slide
+    activeSlideElement = slideEl;
+    activeSlideIndex = slideElIndex;
+
+    if (!slideElVideo) return;
+
+    slideElVideo.play();
+  };
+
+  /**
+   * Register event listeners in a loop
+   */
+  for (let i = 0; i < slideNodes.length; i++) {
+    const slideEl = slideNodes.at(i)!;
+
+    const slideContentEl = getAssertedHtmlElement('.exp-slide-content', slideEl);
+
+    const slideElVideo = slideEl.querySelector<HTMLVideoElement>('video');
+
+    // Play the video at first page load, if it exists on active slide
+    if (slideEl.classList.contains('is-active')) {
+      slideElVideo?.play();
+      activeSlideElement = slideEl;
+      activeSlideIndex = i;
+      slideContentEl.style.visibility = 'visible';
+    } else {
+      slideContentEl.style.visibility = 'hidden';
+    }
+
+    slideEl.addEventListener('click', () => {
+      mm.add('(min-width: 992px)', () => {
+        setActiveSlide(i);
+      });
+    });
+  }
+
+  for (const nextButton of nextButtons) {
+    nextButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeSlideIndex >= slideNodes.length - 1) return;
+
+      setActiveSlide(activeSlideIndex + 1);
+    });
+  }
+
+  for (const prevButton of prevButtons) {
+    prevButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeSlideIndex === 0) return;
+
+      setActiveSlide(activeSlideIndex - 1);
+    });
+  }
+
+  emblaApi.on('select', (evt) => {
+    const activeSlideIndex = evt.internalEngine().index.get();
+    setActiveSlide(activeSlideIndex);
   });
 }
-
-for (const nextButton of nextButtons) {
-  nextButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (activeSlideIndex >= slideNodes.length - 1) return;
-
-    setActiveSlide(activeSlideIndex + 1);
-  });
-}
-
-for (const prevButton of prevButtons) {
-  prevButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (activeSlideIndex === 0) return;
-
-    setActiveSlide(activeSlideIndex - 1);
-  });
-}
-
-emblaApi.on('select', (evt) => {
-  const activeSlideIndex = evt.internalEngine().index.get();
-  setActiveSlide(activeSlideIndex);
-});
