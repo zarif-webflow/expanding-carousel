@@ -1,19 +1,27 @@
 import EmblaCarousel, { type EmblaOptionsType } from 'embla-carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
 
-gsap.registerPlugin(Flip);
-
 import { getAssertedHtmlElement } from './utils/util';
+
+const mm = gsap.matchMedia();
+
+gsap.registerPlugin(Flip);
 
 /**
  * Register Embla Carousel Plugins
  */
 const emblaNode = getAssertedHtmlElement('.embla');
-const options: EmblaOptionsType = { loop: false, align: 'center', skipSnaps: true };
-const plugins = [Autoplay()];
-const emblaApi = EmblaCarousel(emblaNode, options, plugins);
+const options: EmblaOptionsType = {
+  loop: false,
+  align: 'center',
+  skipSnaps: true,
+  breakpoints: {
+    '(min-width: 768px)': { watchDrag: false },
+  },
+  startIndex: 1,
+};
+const emblaApi = EmblaCarousel(emblaNode, options);
 
 /**
  * Elements
@@ -48,8 +56,12 @@ const setActiveSlide = (slideElIndex: number) => {
   // Scroll to the current active slide
   emblaApi.scrollTo(slideElIndex);
 
-  // Gsap Flip State
-  const flipState = Flip.getState(slideNodes, { props: 'flex' });
+  let flipState: Flip.FlipState | undefined = undefined;
+
+  mm.add('(min-width: 768px)', () => {
+    // Gsap Flip State
+    flipState = Flip.getState(slideNodes, { props: 'flex' });
+  });
 
   // Remove the previous active slide and pause it's video
   activeSlideElement?.classList.remove('is-active');
@@ -64,25 +76,52 @@ const setActiveSlide = (slideElIndex: number) => {
   // Add the active class and play the video
   slideEl.classList.add('is-active');
 
-  Flip.from(flipState, {
-    duration: 0.4,
-    ease: 'power1.inOut',
-    onComplete: () => {
-      gsap.fromTo(
-        slideContentEl,
-        {
-          x: '100%',
-          opacity: 0,
+  let matchedMedia: boolean = false;
+
+  mm.add('(min-width: 768px)', () => {
+    matchedMedia = true;
+    if (flipState)
+      Flip.from(flipState, {
+        duration: 0.4,
+        ease: 'power1.inOut',
+        onComplete: () => {
+          gsap.fromTo(
+            slideContentEl,
+            {
+              x: '100%',
+              opacity: 0,
+              visibility: 'hidden',
+            },
+            {
+              x: '0%',
+              opacity: 1,
+              visibility: 'visible',
+            }
+          );
         },
-        {
-          x: '0%',
-          opacity: 1,
-          visibility: 'visible',
-        }
-      );
-    },
+      });
   });
 
+  if (!matchedMedia) {
+    gsap.fromTo(
+      slideContentEl,
+      {
+        x: '100%',
+        opacity: 0,
+        visibility: 'hidden',
+      },
+      {
+        x: '0%',
+        opacity: 1,
+        visibility: 'visible',
+      }
+    );
+
+    // if (prevActiveSlideContent)
+    //   gsap.to(prevActiveSlideContent, {
+    //     visibility: 'hidden',
+    //   });
+  }
   // Reassign the active slide
   activeSlideElement = slideEl;
   activeSlideIndex = slideElIndex;
@@ -107,12 +146,15 @@ for (let i = 0; i < slideNodes.length; i++) {
     slideElVideo?.play();
     activeSlideElement = slideEl;
     activeSlideIndex = i;
+    slideContentEl.style.visibility = 'visible';
   } else {
     slideContentEl.style.visibility = 'hidden';
   }
 
   slideEl.addEventListener('click', () => {
-    setActiveSlide(i);
+    mm.add('(min-width: 768px)', () => {
+      setActiveSlide(i);
+    });
   });
 }
 
@@ -133,3 +175,8 @@ for (const prevButton of prevButtons) {
     setActiveSlide(activeSlideIndex - 1);
   });
 }
+
+emblaApi.on('select', (evt) => {
+  const activeSlideIndex = evt.internalEngine().index.get();
+  setActiveSlide(activeSlideIndex);
+});

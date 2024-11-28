@@ -113,3 +113,12 @@
   font-weight: 700;
   font-size: 18px;
 }
+
+@media only screen and (max-width: 768px) {
+  .embla__slide {
+    flex: 1 0 100% !important;
+  }
+  .embla__slide.is-active {
+    flex: 1 0 100% !important;
+  }
+}
